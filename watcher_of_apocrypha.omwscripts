@@ -1,0 +1,4 @@
+MENU: lua/watcher/settings_renderer.lua
+MENU: lua/watcher/save_info.lua
+PLAYER: lua/watcher/init.lua
+PLAYER: lua/watcher/settings.lua
