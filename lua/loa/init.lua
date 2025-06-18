@@ -2,19 +2,19 @@ local core              = require('openmw.core')
 local types             = require('openmw.types')
 local storage           = require('openmw.storage')
 local self              = require('openmw.self')
-local watcherModData    = storage.playerSection('WatcherModData')
+local watcher    = storage.playerSection('watcher_for_loa')
 
 local function onInitOrOnLoad()
     print('onInitOrOnLoad init.lua')
-    types.Player.sendMenuEvent(self, 'GetSaveDirectory')
-    print('onInitOrOnLoad:GetSaveDirectory:',watcherModData:get('directory'))
+    types.Player.sendMenuEvent(self, 'GetCurrentDirectory')
+    print('onInitOrOnLoad:GetCurrentDirectory:',watcher:get('directory'))
 end
 
 local function onSave()
     local gameTime = tostring(core.getGameTime()) --always first line for accuracy
-    print(watcherModData:get('tracked_books'))
-    print(watcherModData:get('directory'))
-    if watcherModData:get('tracked_books') and watcherModData:get('directory') then
+    print(watcher:get('onSave:tracked_books'))
+    print(watcher:get('onSave:directory'))
+    if watcher:get('tracked_books') and watcher:get('directory') then
         types.Player.sendMenuEvent(self, 'GameSaved', gameTime)
     else
         print('****NOTHING SAVED****') --REMOVE THIS FOR PRODUCTION
@@ -27,8 +27,9 @@ local function UiModeChanged(data)
     if (data.newMode == 'Book' or data.newMode == 'Scroll') and types.Book.objectIsInstance(data.arg) then
         print(data.arg.id)
         local id = types.Book.record(data.arg).id
-        local booksTracked = watcherModData:getCopy('tracked_books') or {}
+        local booksTracked = watcher:getCopy('tracked_books') or {}
         if not booksTracked[id] then
+            print(id, ' is new:UiModeChanged')
             booksTracked[id] = {
                 ['discoverd_on'] = time,
                 ['entries'] = {}
@@ -45,7 +46,7 @@ local function UiModeChanged(data)
             booksTracked[id]['entries'][data.arg.id]['cell_region'] = data.arg.cell.region or nil
             booksTracked[id]['entries'][data.arg.id]['cell_isExterior'] = data.arg.cell.isExterior or nil
         end
-        watcherModData:set('tracked_books', booksTracked)
+        watcher:set('tracked_books', booksTracked)
     end
 end
 

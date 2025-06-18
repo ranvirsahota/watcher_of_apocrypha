@@ -1,0 +1,4 @@
+MENU: lua/loa/settings_renderer.lua
+MENU: lua/loa/save_info.lua
+PLAYER: lua/loa/init.lua
+PLAYER: lua/loa/settings.lua
